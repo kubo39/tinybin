@@ -2,7 +2,7 @@ import syscall : syscall, WRITE;
 
 void main()
 {
-  auto hello = "Hello!\n";
+  immutable(char)[7] hello = "Hello!\n";
   size_t stdout = 1;
-  syscall(WRITE, stdout, cast(size_t) hello.ptr, hello.length);
+  syscall(WRITE, stdout, cast(size_t) hello.ptr, 7);
 }
