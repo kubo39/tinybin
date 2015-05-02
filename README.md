@@ -102,3 +102,12 @@ $ strip tinybin
 $ wc -c < tinybin
 285536
 ```
+
+## 6. dd使ってsection headerを削る
+
+```
+$ dd if=tinybin of=tinybin_nosectionhdr count=283487 bs=1
+$ chmod +x tinybin_nosectionhdr
+$ wc -c < tinybin_nosectionhdr
+283487
+```
