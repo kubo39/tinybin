@@ -1,0 +1,8 @@
+{
+	"name": "tinybin",
+	"description": "A minimal D application.",
+	"copyright": "Copyright © 2015, kubo39",
+	"authors": ["kubo39"],
+	"dependencies": {
+	}
+}
