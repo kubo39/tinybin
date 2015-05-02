@@ -101,4 +101,4 @@ $ ls -l tinybin
 $ strip tinybin
 $ wc -c < tinybin
 285536
-``
+```
