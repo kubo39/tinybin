@@ -4,5 +4,6 @@
 	"copyright": "Copyright © 2015, kubo39",
 	"authors": ["kubo39"],
 	"dependencies": {
+        "syscall.d": {"version": "~master", "path": "../syscall.d"}
 	}
 }
