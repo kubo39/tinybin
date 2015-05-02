@@ -94,3 +94,11 @@ void main()
 $ ls -l tinybin
 -rwxrwxr-x 1 kubo39 kubo39 429037  5月  2 17:02 tinybin
 ```
+
+## 5. 生成したバイナリにstripをかける
+
+```
+$ strip tinybin
+$ wc -c < tinybin
+285536
+``
