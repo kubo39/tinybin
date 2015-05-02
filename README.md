@@ -105,7 +105,7 @@ $ wc -c < tinybin
 
 ## 6. dd使ってsection headerを削る
 
-`readlef -h tinbin` でセクションヘッダの開始位置を調べる.
+`readelf -h tinybin` でセクションヘッダの開始位置を調べる.
 
 ```
 $ dd if=tinybin of=tinybin_nosectionhdr count=283487 bs=1
