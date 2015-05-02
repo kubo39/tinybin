@@ -1,4 +1,4 @@
-# tinylib
+# tinybin
 
 ## 1. デフォルト
 
@@ -7,7 +7,7 @@ import std.stdio;
 
 void main()
 {
-  Hello!".writeln;
+  "Hello!".writeln;
 }
 ```
 
