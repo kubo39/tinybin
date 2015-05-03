@@ -279,3 +279,77 @@ $ dd if=tinybin of=tinybin_nosectionhdr count=132887 bs=1
 $ wc -c < tinybin_nosectionhdr
 132887
 ```
+
+## 10. エントリポイントをmainに差し替えて、不要なsectionを削除
+
+リンカのオプションに `-e main -Xlinker --gc-section` 追加.
+
+```
+#!/bin/bash
+
+set -e
+
+for d in dmd; do
+    which $d >/dev/null || (echo "Can't find $d, needed to build"; exit 1)
+done
+
+dmd | head -1
+echo
+
+set -x
+
+dmd -c -noboundscheck -release source/app.d
+gcc app.o -o tinybin -e main -s -Xlinker --gc-section -l:libphobos2.a -lpthread
+```
+
+`exit(2)` 呼び出しを追加. (segv対策)
+
+```d
+@system:
+
+extern(C)
+{
+  void write(size_t p, size_t len)
+  {
+    asm
+    {
+      mov RAX, 1;      // WRITE
+      mov RDI, 1;      // STDOUT
+      mov RSI, p[RBP];
+      mov RDX, len[RBP];
+      syscall;
+    }
+  }
+
+  void exit()
+  {
+    asm{
+      mov RAX, 60;  // EIXT
+      mov RDI, 0;
+      syscall;
+    }
+  }
+
+  int main()
+  {
+    immutable(char)[7] buf = "Hello!\n";
+    write(cast(size_t)buf.ptr, 7);
+    exit();
+    return 0;
+  }
+}
+```
+
+ビルド.
+
+```
+$ ./build.sh
+DMD64 D Compiler v2.067.1
+
++ dmd -c -noboundscheck -release source/app.d
++ gcc app.o -o tinybin -e main -s -Xlinker --gc-section -l:libphobos2.a -lpthread
+$ ./tinybin
+Hello!
+$ wc -c < tinybin
+77352
+```

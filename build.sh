@@ -12,4 +12,4 @@ echo
 set -x
 
 dmd -c -noboundscheck -release source/app.d
-gcc app.o -o tinybin -s -m64 -l:libphobos2.a -lpthread
+gcc app.o -o tinybin -e main -s -Xlinker --gc-section -l:libphobos2.a -lpthread
