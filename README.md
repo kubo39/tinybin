@@ -199,3 +199,45 @@ Hello!
 $ wc -c < tinybin_nosectionhdr
 168799
 ```
+
+## 8. synchronizedを外してcritical sectionのオーバヘッドを削減
+
+この程度のプログラムで特にチェックする必要はなさそう.
+
+```d
+@system:
+
+void write(size_t p, size_t len)
+{
+  asm
+  {
+    mov RAX, 1;    // WRITE
+    mov RDI, 1;    // STDOUT
+    mov RSI, p[RBP];
+    mov RDX, len[RBP];
+    syscall;
+  }
+}
+
+
+void main()
+{
+  immutable(char)[7] hello = "Hello!\n";
+  write(cast(size_t) hello.ptr, 7);
+}
+```
+
+ビルドする.
+
+```
+$ wc -c < tinybin
+170760
+$ dd if=tinybin of=tinybin_nosectionhdr count=168711 bs=1
+$ chmod +x tinybin_nosectionhdr
+$ wc -c < tinybin_nosectionhdr
+168711
+$ ./tinybin_nosectionhdr
+Hello!
+```
+
+実行もできてる.
