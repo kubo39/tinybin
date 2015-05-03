@@ -2,21 +2,14 @@
 
 set -e
 
-for d in dmd git dub strip; do
+for d in dmd; do
     which $d >/dev/null || (echo "Can't find $d, needed to build"; exit 1)
 done
 
 dmd | head -1
 echo
 
-if [ ! -d syscall.d ]; then
-    git clone git://github.com/kubo39/syscall.d
-    dub add-local syscall.d ~master
-    echo
-fi
-
 set -x
 
-dub build --build=release
-
-strip tinybin
+dmd -c -noboundscheck -release source/app.d
+gcc app.o -o tinybin -s -m64 -L/usr/lib/x86_64-linux-gnu -Xlinker -l:libphobos2.a -lpthread

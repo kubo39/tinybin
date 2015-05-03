@@ -14,8 +14,6 @@ model name      : Intel(R) Core(TM) i5-4200U CPU @ 1.60GHz
 
 ## やったこと
 
-1〜5 までは `build.sh` 叩いたら実行します.
-
 ### 1. デフォルト
 
 ```d
@@ -128,4 +126,76 @@ $ dd if=tinybin of=tinybin_nosectionhdr count=283487 bs=1
 $ chmod +x tinybin_nosectionhdr
 $ wc -c < tinybin_nosectionhdr
 283487
+```
+
+### 7. dub路線に見切りをつけてlink周りをいじる
+
+`syscall.d` の syscall 呼び出し部分を直接コードに書く.
+
+```d
+@system:
+
+void write(size_t p, size_t len)
+{
+  synchronized asm
+  {
+    mov RAX, 1;    // WRITE
+    mov RDI, 1;    // STDOUT
+    mov RSI, p[RBP];
+    mov RDX, len[RBP];
+    syscall;
+  }
+}
+
+
+void main()
+{
+  immutable(char)[7] hello = "Hello!\n";
+  write(cast(size_t) hello.ptr, 7);
+}
+```
+
+こういう `build.sh` を用意.
+
+```
+#!/bin/bash
+
+set -e
+
+for d in dmd; do
+    which $d >/dev/null || (echo "Can't find $d, needed to build"; exit 1)
+done
+
+dmd | head -1
+echo
+
+set -x
+
+dmd -c -noboundscheck -release source/app.d
+gcc app.o -o tinybin -s -m64 -L/usr/lib/x86_64-linux-gnu -Xlinker -l:libphobos2.a -lpthread
+```
+
+ビルドする.
+
+```
+$ ./build.sh
+DMD64 D Compiler v2.067.1
+
++ dmd -c -noboundscheck -release source/app.d
++ gcc app.o -o tinybin -s -m64 -L/usr/lib/x86_64-linux-gnu -Xlinker -l:libphobos2.a -lpthread
+$ ./tinybin
+Hello!
+$ wc -c < tinybin
+170848
+```
+
+6 のとこででやったように dd 使って削る.
+
+```
+$ dd if=tinybin of=tinybin_nosectionhdr count=168799 bs=1
+$ chmod +x tinybin_nosectionhdr
+$ ./tinybin_nosectionhdr
+Hello!
+$ wc -c < tinybin_nosectionhdr
+168799
 ```
