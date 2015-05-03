@@ -2,7 +2,7 @@
 
 void write(size_t p, size_t len)
 {
-  synchronized asm
+  asm
   {
     mov RAX, 1;    // WRITE
     mov RDI, 1;    // STDOUT
