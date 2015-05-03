@@ -241,3 +241,41 @@ Hello!
 ```
 
 実行もできてる.
+
+## 9. さよなら _Dmain && _d_run_main
+
+```d
+@system:
+
+extern(C)
+{
+  void write(size_t p, size_t len)
+  {
+    asm
+    {
+      mov RAX, 1;      // WRITE
+      mov RDI, 1;      // STDOUT
+      mov RSI, p[RBP];
+      mov RDX, len[RBP];
+      syscall;
+    }
+  }
+
+  int main()
+  {
+    immutable(char)[7] buf = "Hello!\n";
+    write(cast(size_t)buf.ptr, 7);
+    return 0;
+  }
+}
+```
+
+```
+$ ./tinybin
+Hello!
+$ wc -c < tinybin
+134872
+$ dd if=tinybin of=tinybin_nosectionhdr count=132887 bs=1
+$ wc -c < tinybin_nosectionhdr
+132887
+```
