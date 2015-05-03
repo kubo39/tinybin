@@ -422,3 +422,49 @@ $ dd if=tinybin of=tinybin_nosectionhdr count=75479 bs=1
 $ wc -c < tinybin_nosectionhdr
 75479
 ```
+
+
+### 12. final !!!
+
+sectionをひとまとめにしてalignmentをなくすlinker scriptを書く.
+
+```
+SECTIONS {
+    . = 0x400078;
+
+    combined . : AT(0x400078) ALIGN(1) SUBALIGN(1) {
+        *(.text*)
+        *(.data*)
+        *(.rodata*)
+        *(.bss*)
+    }
+}
+```
+
+` 0x400078` は用意したカスタムヘッダの最後に積まれるアドレス.
+
+用意したカスタムELFヘッダ(一切の命令が入ってなくてdata filedのみある)を使う.
+
+ld が `_Dmain` をファイルのどこに置くかわからないので、別々にバイナリを生成する必要がある.
+
+`_Dmain` の置かれるアドレス領域は `payload` を生成するタイミングで決定する.
+
+最終的にこうなる.
+
+```
+$ ./build.sh
+DMD64 D Compiler v2.067.1
+
++ dmd -c -noboundscheck -release source/app.d
++ gcc app.o -o tinybin -e _Dmain -T script.ld -s -Xlinker --gc-section -l:libphobos2.a -lpthread
++ objcopy -j combined -O binary payload payload.bin
+++ nm -f posix payload
+++ grep _Dmain
+++ awk '{print $3}'
++ ENTRY=00000000004000c8
++ nasm -f bin -o tinybin -D entry=0x00000000004000c8 elf.s
+$ ./tinybin
+Hello!
+$ wc -c < tinybin
+296
+```
