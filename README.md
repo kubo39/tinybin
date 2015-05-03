@@ -363,3 +363,62 @@ Hello!
 $ wc -c < tinybin_nosectionhdr
 75495
 ```
+
+
+### 11. エントリポイントを _Dmain に差し替えてコードを修正
+
+```d
+@system:
+
+void write(size_t p, size_t len)
+{
+  asm
+  {
+    mov RAX, 1;  // WRITE
+    mov RDI, 1;  // STDOUT
+    mov RSI, p[RBP];
+    mov RDX, len[RBP];
+    syscall;
+  }
+}
+
+void exit()
+{
+  asm
+  {
+    mov RAX, 60;  // EXIT
+    mov RDI, 0;
+    syscall;
+  }
+}
+
+
+void main()
+{
+  immutable(char)[7] buf = "Hello!\n";
+  write(cast(size_t) buf.ptr, 7);
+  exit();
+}
+```
+
+エントリポイントを差し替えてビルド.
+
+```
+ $ ./build.sh
+ DMD64 D Compiler v2.067.1
+
++ dmd -c -noboundscheck -release source/app.d
++ gcc app.o -o tinybin -e _Dmain -s -Xlinker --gc-section -l:libphobos2.a -lpthread
+$ ./tinybin
+Hello!
+$ wc -c < tinybin
+77336
+```
+
+dd版.
+
+```
+$ dd if=tinybin of=tinybin_nosectionhdr count=75479 bs=1
+$ wc -c < tinybin_nosectionhdr
+75479
+```
