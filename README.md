@@ -456,7 +456,7 @@ $ ./build.sh
 DMD64 D Compiler v2.067.1
 
 + dmd -c -noboundscheck -release source/app.d
-+ gcc app.o -o tinybin -e _Dmain -T script.ld -s -Xlinker --gc-section -l:libphobos2.a -lpthread
++ gcc app.o -o payload -e _Dmain -T script.ld -s -Xlinker --gc-section -l:libphobos2.a -lpthread
 + objcopy -j combined -O binary payload payload.bin
 ++ nm -f posix payload
 ++ grep _Dmain
