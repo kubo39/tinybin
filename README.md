@@ -200,7 +200,7 @@ $ wc -c < tinybin_nosectionhdr
 168799
 ```
 
-## 8. synchronizedを外してcritical sectionのオーバヘッドを削減
+### 8. synchronizedを外してcritical sectionのオーバヘッドを削減
 
 この程度のプログラムで特にチェックする必要はなさそう.
 
@@ -242,7 +242,7 @@ Hello!
 
 実行もできてる.
 
-## 9. さよなら _Dmain && _d_run_main
+### 9. さよなら _Dmain && _d_run_main
 
 ```d
 @system:
@@ -280,7 +280,7 @@ $ wc -c < tinybin_nosectionhdr
 132887
 ```
 
-## 10. エントリポイントをmainに差し替えて、不要なsectionを削除
+### 10. エントリポイントをmainに差し替えて、不要なsectionを削除
 
 リンカのオプションに `-e main -Xlinker --gc-section` 追加.
 
