@@ -1,6 +1,22 @@
 # tinybin
 
-## 1. デフォルト
+## 実行環境
+
+```
+$ uname -srvp
+Linux 3.13.0-49-generic #83-Ubuntu SMP Fri Apr 10 20:11:33 UTC 2015 x86_64
+$ cat /proc/cpuinfo | grep 'model name'
+model name      : Intel(R) Core(TM) i5-4200U CPU @ 1.60GHz
+model name      : Intel(R) Core(TM) i5-4200U CPU @ 1.60GHz
+model name      : Intel(R) Core(TM) i5-4200U CPU @ 1.60GHz
+model name      : Intel(R) Core(TM) i5-4200U CPU @ 1.60GHz
+```
+
+## やったこと
+
+1〜5 までは `build.sh` 叩いたら実行します.
+
+### 1. デフォルト
 
 ```d
 import std.stdio;
@@ -21,7 +37,7 @@ $ ls -l tinybin
 ```
 
 
-## 2. -releaseオプション
+### 2. -releaseオプション
 
 ```
 $dub build --build=release
@@ -32,7 +48,7 @@ $ ls -l tinybin
 -rwxrwxr-x 1 kubo39 kubo39 700884  5月  2 16:35 tinybin
 ```
 
-## 3. stdioをやめる
+### 3. stdioをやめる
 
 ```
 $ git clone git://github.com/kubo39/syscall.d
@@ -75,7 +91,7 @@ $ ls -l tinybin
 ```
 
 
-## 4. string型から固定長にする
+### 4. string型から固定長にする
 
 ```d
 import syscall : syscall, WRITE;
@@ -95,7 +111,7 @@ $ ls -l tinybin
 -rwxrwxr-x 1 kubo39 kubo39 429037  5月  2 17:02 tinybin
 ```
 
-## 5. 生成したバイナリにstripをかける
+### 5. 生成したバイナリにstripをかける
 
 ```
 $ strip tinybin
@@ -103,7 +119,7 @@ $ wc -c < tinybin
 285536
 ```
 
-## 6. dd使ってsection headerを削る
+### 6. dd使ってsection headerを削る
 
 `readelf -h tinybin` でセクションヘッダの開始位置を調べる.
 
