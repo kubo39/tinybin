@@ -353,3 +353,13 @@ Hello!
 $ wc -c < tinybin
 77352
 ```
+
+さらにsection headerを削った場合.
+
+```
+$ dd if=tinybin of=tinybin_nosectionhdr count=75495 bs=1
+$ ./tinybin_nosectionhdr
+Hello!
+$ wc -c < tinybin_nosectionhdr
+75495
+```
